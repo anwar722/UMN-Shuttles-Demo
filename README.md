@@ -9,7 +9,7 @@ Features that may come in handy:
 - Other MapKit and custom MKAnnotation implementation features (e.g. adding an "observer" to detect vehicles' angle/rotation property)
 
 ## Screenshot:
-![Alt text](https://github.com/anwar722/UMN-Shuttles-Demo/blob/master/Map%20Demo/screenshot.png "screenshot")
+![Alt text](https://github.com/anwar722/UMN-Shuttles-Demo/blob/master/Map%20Demo/screenshot.png =393x698"screenshot")
 
 Thank you, and hope you find it useful. This app could use a lot of improvements (memory management, efficient caching, etc.) So please feel free to use it and make it better!
 
