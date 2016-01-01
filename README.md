@@ -1,6 +1,6 @@
 # UMN Shuttles Demo 
 
-This is a simple app which parses data from the [NextBus XML](https://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf) feed and displays bus stops, and real-time bus locations on a map. You can use this if you're trying to learn about Apple's `NSXMLParser`, `MapKit` and the NextBus API using Swift 1.2. Please note that this is a demo version of a more elaborate application and is based on iOS 8.2. Updates for iOS 9.1 are to be followed soon. Also, the full version of the application will be uploaded in a different repository once the UI elements are figured out!
+This is a simple app which parses data from the [NextBus XML](https://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf) feed and displays bus stops, and real-time bus locations on a map. You can use this if you're trying to learn about Apple's `NSXMLParser`, `MapKit` and the NextBus API using Swift 2.1. Please note that this is a demo version of a more elaborate application and the full version of the application will be uploaded in a different repository once the UI elements are figured out!
 
 **Features that may come in handy across multiple applications:**
 - Parsing live XML data from http (specifically, NextBus)
