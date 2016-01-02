@@ -6,13 +6,17 @@
 //  Copyright (c) 2015 Mashfique Anwar. All rights reserved.
 //
 
-//** Don't forget to add core-location framework and setup info.plist.
 
 import UIKit
+
 import MapKit           // IMPORTANT- for map view
+
 import CoreLocation     // IMPORTANT - for user's location
+
 import Foundation
+
 import QuartzCore
+
 
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, NSXMLParserDelegate {
     
@@ -25,63 +29,70 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var latitudeArray: NSMutableArray = NSMutableArray()
     var longitudeArray: NSMutableArray = NSMutableArray()
     
-    //************************************************************************************************
+    //*********************************************************************************************
     
     @IBOutlet var map: MKMapView!
     
-    var locationManager = CLLocationManager()
+    var locationManager = CLLocationManager()       // the variable that we'll access when we need to do something with the location. Should be outside viewDidLoad
     
     override func viewDidLoad() {
         super.viewDidLoad()
-   
+        
         map.removeOverlays(map.overlays)
         map.delegate = self
-        beginParsing()      // Begin parsing the XML- starting with drawing routes and marking bus stops
- 
+        beginParsing()
+        
         // Determining the user's location
+        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()         // for our app, we'll request authorzation only when our app is running
+        locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        
         // Setting User Location
-        var latitude:CLLocationDegrees = 44.973366
-        var longitude:CLLocationDegrees = -93.217622
         
-        var latDelta:CLLocationDegrees = 0.07 // latDelta is the difference between latitudes from one side of the screen to the other. For eg 0.00001 would be very zoomed in and 1 would be very zoomed out!
-        var lonDelta:CLLocationDegrees = 0.07   // similar to latDelta
+        let latitude:CLLocationDegrees = 44.973366
+        let longitude:CLLocationDegrees = -93.217622
         
-        var span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)    // a span is basically the combination of two deltas (i.e., the two changes between degrees)
+        let latDelta:CLLocationDegrees = 0.07 // latDelta is the difference between latitudes from one side of the screen to the other. For eg 0.00001 would be very zoomed in and 1 would be very zoomed out!
+        let lonDelta:CLLocationDegrees = 0.07   // similar to latDelta
         
-        var location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)   // a pair of coordinates
-    
-        var region:MKCoordinateRegion = MKCoordinateRegionMake(location, span)    // combines the span and location
-        map.setRegion(region, animated: true)
+        let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)    // a span is basically the combination of two deltas (i.e., the two changes between degrees)
+        
+        let location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)   // a pair of coordinates
+        
+        let region:MKCoordinateRegion = MKCoordinateRegionMake(location, span)    // combines the span and location
+        
+        //var timer = NSTimer.scheduledTimerWithTimeInterval(0.09, target: self, selector: "exampleTimer", userInfo: nil, repeats: true)
+        
+        map.setRegion(region, animated: false)
+        map.rotateEnabled = false
     }
     
     
     // This function will be called everytime a new location is registered by the phone. This is basically the function which updates the current location of the user!
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        println(locations)
-                
-        var userLocation : CLLocation = locations[0] as CLLocation
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        var latitude = userLocation.coordinate.latitude
-        var longitude = userLocation.coordinate.longitude
+        let userLocation : CLLocation = locations[0] as CLLocation
         
-        var latDelta:CLLocationDegrees = 0.01 // latDelta is the difference between latitudes from one side of the screen to the other. For eg 0.00001 would be very zoomed in and 1 would be very zoomed out!
-        var lonDelta:CLLocationDegrees = 0.01   // similar to latDelta
+        let latitude = userLocation.coordinate.latitude
+        let longitude = userLocation.coordinate.longitude
         
-        var span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)    // a span is basically the combination of two deltas (i.e., the two changes between degrees)
+        let latDelta:CLLocationDegrees = 0.01 // latDelta is the difference between latitudes from one side of the screen to the other. For eg 0.00001 would be very zoomed in and 1 would be very zoomed out!
         
-        var location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)
+        let lonDelta:CLLocationDegrees = 0.01   // similar to latDelta
+        
+        let span:MKCoordinateSpan = MKCoordinateSpanMake(latDelta, lonDelta)    // a span is basically the combination of two deltas (i.e., the two changes between degrees)
+        
+        let location:CLLocationCoordinate2D = CLLocationCoordinate2DMake(latitude, longitude)   // a pair of coordinates
+        
         var region:MKCoordinateRegion = MKCoordinateRegionMake(location, span)    // combines the span and location
         
-        //self.map.setRegion(region, animated: true)      // need to add self since we're in a closure
+        //self.map.setRegion(region, animated: true)      // need to add self since we're in a closure (not sure if we need this line)
+        
+        
     }
     
-    // ------------------- For MKPolyLine -------------------//
     
     func addPolyLineToMap(locations: [CLLocation!])
     {
@@ -89,7 +100,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             return location.coordinate
         })
         
-        var polyline = MKPolyline(coordinates: &coordinates, count: locations.count)
+        let polyline = MKPolyline(coordinates: &coordinates, count: locations.count)
         
         self.map.addOverlay(polyline)
     }
@@ -97,7 +108,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func mapView(mapView: MKMapView!, viewForOverlay overlay: MKOverlay!) -> MKOverlayRenderer! {
         
         if (overlay is MKPolyline) {
-            var pr = MKPolylineRenderer(overlay: overlay);
+            let pr = MKPolylineRenderer(overlay: overlay);
             pr.strokeColor = UIColor.redColor().colorWithAlphaComponent(0.5);
             pr.lineWidth = 5;
             return pr;
@@ -105,7 +116,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         return nil
     }
-    // ------------------------------------------------//
     
     //***************** XML Parsing *******************//
     
@@ -113,53 +123,68 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func beginParsing() {
         control = "drawingRoutes"
-        var urlForRoutes = NSURL(string: "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=umn-twin&r=connector")
-        parser = NSXMLParser(contentsOfURL: urlForRoutes)!
+        let urlForRoutes = NSURL(string: "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=umn-twin&r=connector")
+        parser = NSXMLParser(contentsOfURL: urlForRoutes!)!
         parser.delegate = self
         parser.parse()
-  
-        var timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateBusLocation", userInfo: nil, repeats: true)
+        
+        
+        
+        //var timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateBusLocation", userInfo: nil, repeats: true)
     }
     
     func updateBusLocation() {
         control = "trackingBuses"
-        var epochTime = String(Int(NSDate().timeIntervalSince1970))     // calculate Epoch Time   // example epochTime: 1442694234
-        var urlForTrackingBuses = NSURL(string: "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=umn-twin&r=connector&t=\(epochTime)")
-        parser = NSXMLParser(contentsOfURL: urlForTrackingBuses)!
+        let epochTime = String(Int(NSDate().timeIntervalSince1970))     // calculate Epoch Time   // example epochTime: 1442694234
+        let urlForTrackingBuses = NSURL(string: "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=umn-twin&r=connector&t=\(epochTime)")
+        parser = NSXMLParser(contentsOfURL: urlForTrackingBuses!)!
+        parser.delegate = self
+        parser.parse()
+    }
+    
+    func getStopPrediction(stopID: String) {
+        control = "prediction"
+        let urlForPredictions = NSURL(string: "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=umn-twin&r=connector&s=\(stopID)")
+        parser = NSXMLParser(contentsOfURL: urlForPredictions!)!
         parser.delegate = self
         parser.parse()
     }
     
     var lookedMoreThanOnce = false
     var startTrackingBuses = false
-    
+
     var busDirection = CLLocationDirection()
     
     var myAnnotation:Bus!
-    var busArray: [Bus!] = []   //Empty array holding "Bus" annotation types
+    var busArray: [Bus!] = []   //Empty array to hold "Bus" annotation types
     
     var vehicleCount = 0
     var oldVehicleCount = 0
     var vehicleIndex = 0
     var trackingBusForTheVeryFirstTime = true
     
-    func parser(parser: NSXMLParser!, didStartElement elementName: String!, namespaceURI: String!, qualifiedName qName: String!, attributes attributeDict: NSDictionary!) {
+    // Boolean for stop annotations (Need to change name before final release) :
+    var stopAnnotation = false
+    
+    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+        
         if (control == "drawingRoutes") {
             // ------------------------------------------------ For Drawing Routes ----------------------------------------------//
             if (elementName == "stop") {
-                if let latitude = attributeDict["lat"]?.doubleValue {
-                    if let longitude = attributeDict["lon"]?.doubleValue {
-                        let coord = CLLocationCoordinate2DMake(latitude, longitude)
+                if let latitude = (attributeDict["lat"]){
+                    if let longitude = (attributeDict["lon"]) {
+                        let coord = CLLocationCoordinate2DMake(Double(latitude)!, Double(longitude)!)
                         let ann = StopAnnotation()
                         
                         ann.coordinate = coord
                         ann.title = attributeDict["title"] as String!
-                        ann.subtitle = "Predictions???"
+                        ann.subtitle = "Predictions???"         // So predictions need to be done in the same function too!
                         ann.imageName = "stop.png"
                         
                         self.map.addAnnotation(ann)
                     }
                 }
+                
             }
             
             if (elementName == "path") {
@@ -176,10 +201,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 longitudeArray.addObject(attributeDict["lon"]!)
                 
                 // Draw the line
-                let latArray = latitudeArray as NSArray as [String]
-                let lonArray = longitudeArray as NSArray as [String]
+                let latArray = latitudeArray as NSArray as! [String]
+                let lonArray = longitudeArray as NSArray as! [String]
+                
                 var locations: [CLLocation] = []
                 
+                //println(latArray.count)
                 for (var i = 0; i < latArray.count; i++) {
                     let tempLat = (latArray[i] as NSString).doubleValue
                     let tempLon = (lonArray[i] as NSString).doubleValue
@@ -187,11 +214,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     
                     locations.append(tempLocation)
                 }
+                
                 addPolyLineToMap(locations)
             }
             // ---------------------------------------------------------------------------------------------------------------//
         }
         else if (control == "trackingBuses") {
+            self.stopAnnotation = false     // Now we're tracking buses, so this should be set to false
             if (elementName == "body"){
                 // Need to check oldVehicleCount with current one
                 
@@ -205,13 +234,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 }
             }
             else if (elementName == "vehicle") {
+                //firstTimeTrackingBus = true;
                 
-                let latitude = attributeDict["lat"]?.doubleValue
-                let longitude = attributeDict["lon"]?.doubleValue
-                let id = attributeDict["id"]?.string
-                let dir = attributeDict["heading"]?.doubleValue
-                                
-                var currentCoord = CLLocationCoordinate2DMake(latitude!, longitude!)
+                let latitude = Double(attributeDict["lat"]!)
+                let longitude = Double(attributeDict["lon"]!)
+                let dir = Double(attributeDict["heading"]!)
+                
+                let currentCoord = CLLocationCoordinate2DMake(latitude!, longitude!)
                 
                 // Checking the buses for the VERY FIRST TIME
                 if (trackingBusForTheVeryFirstTime || vehicleCount == 0) {
@@ -223,12 +252,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     self.oldVehicleCount = self.vehicleCount
                 }
                 else {  // UPDATE BUS Location. Note: this is not the first time
-
+                    
                     if (self.vehicleIndex >= self.vehicleCount) {
                         // Need to start over as the number of buses may have changed
                         self.trackingBusForTheVeryFirstTime = true
                         
                         // Need to delete existing annotations from the map
+                        
                         // Empty busArray
                         busArray.removeAll(keepCapacity: false)
                         
@@ -239,16 +269,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     }
                     
                     let oldCoord = busArray[vehicleIndex].oldCoord
-                    //usArray[vehicleIndex] = Bus(coord: currentCoord)
                     
                     if (oldCoord.latitude == latitude && oldCoord.longitude == longitude) {
                         // Delete annotation or do nothing
                         return
                     }
                     else {
+                        
                         // Rotating the bus:
                         UIView.animateWithDuration(0.5) {
                             self.busArray[self.vehicleIndex].coordinate = CLLocationCoordinate2DMake(latitude!, longitude!)
+                            
                             
                             // If bus annotations have not been added to the map yet:
                             if (self.busArray[self.vehicleIndex].addedToMap == false) {
@@ -268,11 +299,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                         return
                     }
                 }
+                
             }
+            
         }
     }
+
     
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+    var newStop = StopAnnotation()
+    
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if (annotation is MKUserLocation) {
+            return nil
+        }
         
         if (annotation is StopAnnotation) {
             let reuseId = "pin"
@@ -286,18 +326,24 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 pinView!.annotation = annotation
             }
             
-            let stop = annotation as StopAnnotation
-            pinView.image = imageWithImage(UIImage(named:stop.imageName)!, scaledToSize: CGSize(width: 13.0, height: 13.0))
-            pinView.canShowCallout = true
+            //let stop = annotation as! StopAnnotation
+            pinView!.image = imageWithImage(UIImage(named:"stop.png")!, scaledToSize: CGSize(width: 11.0, height: 11.0))
+            pinView!.canShowCallout = true
+            pinView!.layer.zPosition = -1
+            
+            let btn = UIButton(type: .DetailDisclosure)
+            pinView?.rightCalloutAccessoryView = btn
+            
             return pinView
         }
         
         let reuseId = "pin\(self.vehicleIndex)"
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
         
+        
         if pinView == nil {
             pinView = BusAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.image = imageWithImage(UIImage(named:"arrow.png")!, scaledToSize: CGSize(width: 21.0, height: 21.0))
+            pinView!.image = imageWithImage(UIImage(named:"arrow.png")!, scaledToSize: CGSize(width: 19.0, height: 19.0))
             self.view.addSubview(pinView!)
         }
         else {
@@ -328,11 +374,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         return fmod(radiansToDegrees(atan2(y, x)), 360.0) + 90.0;
     }
     
-    //************************************************//
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
 }

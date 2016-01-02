@@ -16,16 +16,16 @@ extension UIImage{
     {
         UIGraphicsBeginImageContextWithOptions(self.size, false, 0.0)
         
-        var ctx = UIGraphicsGetCurrentContext();
+        let ctx = UIGraphicsGetCurrentContext();
         let area = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height);
         
         CGContextScaleCTM(ctx, 1, -1);
         CGContextTranslateCTM(ctx, 0, -area.size.height);
-        CGContextSetBlendMode(ctx, kCGBlendModeMultiply);
+        CGContextSetBlendMode(ctx, CGBlendMode.Multiply);
         CGContextSetAlpha(ctx, value);
         CGContextDrawImage(ctx, area, self.CGImage);
         
-        var newImage = UIGraphicsGetImageFromCurrentImageContext();
+        let newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         return newImage;
