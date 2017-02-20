@@ -1,5 +1,5 @@
 //
-//  bus.swift
+//  BusAnnotation.swift
 //  Map Demo
 //
 //  Created by Mashfique Anwar on 10/24/15.
@@ -14,18 +14,16 @@ class Bus : MKPointAnnotation  {
     var oldCoord : CLLocationCoordinate2D!
     var addedToMap = false
     dynamic var angle: CGFloat = 0.0
-    //var busView : MKAnnotationView?
-    //    var currentCord : CLLocationCoordinate2D!
+    // var currentCord : CLLocationCoordinate2D!
     
-    //MUST HAVE
-    //     var id: String!
-    //     var direction: CLLocationDirection!
-    
+    // TODO :
+    // var id: String!
+    // var direction: CLLocationDirection!
     // var numberOfPassengers
     
     init(coord: CLLocationCoordinate2D) {
         self.oldCoord = coord
-        //        self.currentCord = currC
+        // self.currentCord = currC
     }
 }
 
@@ -45,8 +43,7 @@ class BusAnnotationView : MKAnnotationView {
         super.init(frame: frame)
     }
     
-    // add observer
-    
+    // Add observer
     private func addAngleObserver() {
         if let annotation = annotation as? Bus {
             transform = CGAffineTransformMakeRotation(annotation.angle)
@@ -54,23 +51,20 @@ class BusAnnotationView : MKAnnotationView {
         }
     }
     
-    // remove observer
-    
+    // Remove observer
     private func removeAngleObserver() {
         if let annotation = annotation as? Bus {
             annotation.removeObserver(self, forKeyPath: "angle")
         }
     }
     
-    // remember to remove observer when annotation view is deallocated
-    
+    // Remember to remove observer when annotation view is deallocated
     deinit {
         removeAngleObserver()
     }
     
-    // Remember, since annotation views can be reused, if the annotation changes,
+    // Since annotation views can be reused, if the annotation changes,
     // remove the old annotation's observer, if any, and add new one's.
-    
     override var annotation: MKAnnotation? {
         willSet {
             removeAngleObserver()
@@ -81,14 +75,12 @@ class BusAnnotationView : MKAnnotationView {
     }
     
     // Handle observation events for the annotation's `angle`, rotating as appropriate
-    
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-        
         if context == &angleObserverContext {
             UIView.animateWithDuration(0.5) {
                 if let angleNew = change![NSKeyValueChangeNewKey] as? CGFloat {
                     self.transform = CGAffineTransformMakeRotation(angleNew)
-                    //println("OBSERVING and rotated")
+                    // println("OBSERVING and rotated")
                 }
             }
         } else {
